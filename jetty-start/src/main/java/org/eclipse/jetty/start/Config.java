@@ -402,6 +402,7 @@ public class Config
     {
         Classpath cp = new Classpath();
 
+        // 把default_section的classpath复制一份
         cp.overlay(_classpaths.get(DEFAULT_SECTION));
         for (String optionId : optionIds)
         {
@@ -590,6 +591,7 @@ public class Config
             String line = null;
             while ((line = buf.readLine()) != null)
             {
+                // 处理其中的一行
                 String trim = line.trim();
                 if (trim.length() == 0) // empty line
                     continue;

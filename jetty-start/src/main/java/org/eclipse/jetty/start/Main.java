@@ -503,6 +503,7 @@ public class Main
         }
 
         // Normalize the XML config options passed on the command line.
+        // 这里面没解析xml，只是把文件名路径转成绝对文件路径
         configuredXmls = resolveXmlConfigs(configuredXmls);
 
         // Get Desired Classpath based on user provided Active Options.
@@ -560,8 +561,10 @@ public class Main
         // execute Jetty in another JVM
         if (_exec)
         {
+            // 这个里面指定了main类，为start.config文件中的class文件
             CommandLineBuilder cmd = buildCommandLine(classpath,configuredXmls);
 
+            // cmd第一个参数是java执行文件，一般是/usr/bin/java
             ProcessBuilder pbuilder = new ProcessBuilder(cmd.getArgs());
             final Process process = pbuilder.start();
             Runtime.getRuntime().addShutdownHook(new Thread()
@@ -574,6 +577,7 @@ public class Main
                 }
             });
 
+            // 从process.getErrorStream读，写到stderr去
             copyInThread(process.getErrorStream(),System.err);
             copyInThread(process.getInputStream(),System.out);
             copyInThread(System.in,process.getOutputStream());
@@ -612,6 +616,7 @@ public class Main
 
             Config.debug("main.class=" + classname);
 
+            // 到XmlConfiguration中去了
             invokeMain(cl,classname,configuredXmls);
         }
         catch (Exception e)
@@ -659,12 +664,14 @@ public class Main
             return xml.getAbsolutePath();
         }
 
+        // 先取jetty home目录下的配置文件
         xml = new File(_jettyHome,fixPath(xmlFilename));
         if (xml.exists() && xml.isFile())
         {
             return xml.getAbsolutePath();
         }
 
+        // 再搜jetty home 下的etc目录下的
         xml = new File(_jettyHome,fixPath("etc/" + xmlFilename));
         if (xml.exists() && xml.isFile())
         {
@@ -695,6 +702,7 @@ public class Main
             cmd.addEqualsArg("-D" + p,v);
         }
 
+        // 指定了java命令的classpath以及main类
         cmd.addArg("-cp");
         cmd.addRawArg(classpath.toString());
         cmd.addRawArg(_config.getMainClassname());
@@ -730,7 +738,7 @@ public class Main
         {
             return; // done
         }
-
+        // 全局属性？
         Properties props = Config.getProperties();
         if (props.containsKey(key))
         {
