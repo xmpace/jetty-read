@@ -18,6 +18,18 @@
 
 package org.eclipse.jetty.xml;
 
+import org.eclipse.jetty.util.ArrayQueue;
+import org.eclipse.jetty.util.LazyList;
+import org.eclipse.jetty.util.Loader;
+import org.eclipse.jetty.util.TypeUtil;
+import org.eclipse.jetty.util.component.LifeCycle;
+import org.eclipse.jetty.util.log.Log;
+import org.eclipse.jetty.util.log.Logger;
+import org.eclipse.jetty.util.resource.Resource;
+import org.eclipse.jetty.xml.XmlParser.Node;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -45,18 +57,6 @@ import java.util.Properties;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
-
-import org.eclipse.jetty.util.ArrayQueue;
-import org.eclipse.jetty.util.LazyList;
-import org.eclipse.jetty.util.Loader;
-import org.eclipse.jetty.util.TypeUtil;
-import org.eclipse.jetty.util.component.LifeCycle;
-import org.eclipse.jetty.util.log.Log;
-import org.eclipse.jetty.util.log.Logger;
-import org.eclipse.jetty.util.resource.Resource;
-import org.eclipse.jetty.xml.XmlParser.Node;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 /* ------------------------------------------------------------ */
 /**
@@ -119,16 +119,20 @@ public class XmlConfiguration
         XmlParser parser = new XmlParser();
         URL config60 = Loader.getResource(XmlConfiguration.class,"org/eclipse/jetty/xml/configure_6_0.dtd",true);
         URL config76 = Loader.getResource(XmlConfiguration.class,"org/eclipse/jetty/xml/configure_7_6.dtd",true);
+        // 默认的redirect到config76
         parser.redirectEntity("configure.dtd",config76);
+        // 下面这几个redirect到config60
         parser.redirectEntity("configure_1_0.dtd",config60);
         parser.redirectEntity("configure_1_1.dtd",config60);
         parser.redirectEntity("configure_1_2.dtd",config60);
         parser.redirectEntity("configure_1_3.dtd",config60);
         parser.redirectEntity("configure_6_0.dtd",config60);
+        // 这个redirect到config76
         parser.redirectEntity("configure_7_6.dtd",config76);
 
         parser.redirectEntity("http://jetty.mortbay.org/configure.dtd",config76);
         parser.redirectEntity("http://jetty.eclipse.org/configure.dtd",config76);
+        // jetty.xml里面的entity是这个
         parser.redirectEntity("http://www.eclipse.org/jetty/configure.dtd",config76);
 
         parser.redirectEntity("-//Mort Bay Consulting//DTD Configure//EN",config76);
@@ -293,6 +297,7 @@ public class XmlConfiguration
      */
     public Object configure() throws Exception
     {
+        // 返回最顶层的对象实例
         return _processor.configure();
     }
     
@@ -345,13 +350,16 @@ public class XmlConfiguration
 
             if (obj == null && oClass != null)
             {
+                // 创建一个实例
                 obj = oClass.newInstance();
                 _configuration.initializeDefaults(obj);
             }
 
+            // 发现存在同名不同类实例
             if (oClass != null && !oClass.isInstance(obj))
                 throw new ClassCastException(oClass.toString());
 
+            // 将配置文件中的对象创建出来保存到_configuration中
             configure(obj,_root,0);
             return obj;
         }
@@ -380,6 +388,7 @@ public class XmlConfiguration
         {
             String id = cfg.getAttribute("id");
             if (id != null)
+                // 保存已创建的实例
                 _configuration.getIdMap().put(id,obj);
 
             for (; i < cfg.size(); i++)
@@ -430,6 +439,7 @@ public class XmlConfiguration
         private void set(Object obj, XmlParser.Node node) throws Exception
         {
             String attr = node.getAttribute("name");
+            // ex : setThreadPool
             String name = "set" + attr.substring(0,1).toUpperCase(Locale.ENGLISH) + attr.substring(1);
             Object value = value(obj,node);
             Object[] arg =
@@ -1249,6 +1259,7 @@ public class XmlConfiguration
                         {
                             XmlConfiguration configuration = new XmlConfiguration(Resource.newResource(args[i]).getURL());
                             if (last != null)
+                                // 把上一个配置文件所创建出来的实例拿来用
                                 configuration.getIdMap().putAll(last.getIdMap());
                             if (properties.size() > 0)
                             {

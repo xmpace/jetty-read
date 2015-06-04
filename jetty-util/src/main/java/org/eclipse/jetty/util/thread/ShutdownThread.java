@@ -18,14 +18,14 @@
 
 package org.eclipse.jetty.util.thread;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 import org.eclipse.jetty.util.component.Destroyable;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.Logger;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 
 /* ------------------------------------------------------------ */
@@ -59,6 +59,7 @@ public class ShutdownThread extends Thread
         try
         {
             if (!_hooked)
+                // 注册shutdown钩子，当程序关闭或退出或^C或注销或系统关闭的时候会调用注册的线程
                 Runtime.getRuntime().addShutdownHook(this);
             _hooked=true;
         }

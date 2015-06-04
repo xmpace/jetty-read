@@ -18,15 +18,6 @@
 
 package org.eclipse.jetty.server;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.util.Enumeration;
-
-import javax.servlet.AsyncContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.eclipse.jetty.http.HttpGenerator;
 import org.eclipse.jetty.http.HttpURI;
 import org.eclipse.jetty.server.handler.HandlerWrapper;
@@ -45,6 +36,13 @@ import org.eclipse.jetty.util.log.Logger;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ShutdownThread;
 import org.eclipse.jetty.util.thread.ThreadPool;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.util.Enumeration;
 
 /* ------------------------------------------------------------ */
 /** Jetty HTTP Servlet Server.
@@ -262,11 +260,14 @@ public class Server extends HandlerWrapper implements Attributes
     @Override
     protected void doStart() throws Exception
     {
+        // 关闭的时候停止,jetty.xml里这个属性为true
         if (getStopAtShutdown())
         {
+            // 将该server注册到shutdownTread中
             ShutdownThread.register(this);    
         }
-        
+
+        // shutdown监听线程，开了个tcp listen，监听stop命令
         ShutdownMonitor.getInstance().start(); // initialize
 
         LOG.info("jetty-"+__version);

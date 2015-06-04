@@ -18,6 +18,14 @@
 
 package org.eclipse.jetty.util.resource;
 
+import org.eclipse.jetty.util.B64Code;
+import org.eclipse.jetty.util.IO;
+import org.eclipse.jetty.util.Loader;
+import org.eclipse.jetty.util.StringUtil;
+import org.eclipse.jetty.util.URIUtil;
+import org.eclipse.jetty.util.log.Log;
+import org.eclipse.jetty.util.log.Logger;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -30,14 +38,6 @@ import java.net.URLConnection;
 import java.text.DateFormat;
 import java.util.Arrays;
 import java.util.Date;
-
-import org.eclipse.jetty.util.B64Code;
-import org.eclipse.jetty.util.IO;
-import org.eclipse.jetty.util.Loader;
-import org.eclipse.jetty.util.StringUtil;
-import org.eclipse.jetty.util.URIUtil;
-import org.eclipse.jetty.util.log.Log;
-import org.eclipse.jetty.util.log.Logger;
 
 
 /* ------------------------------------------------------------ */

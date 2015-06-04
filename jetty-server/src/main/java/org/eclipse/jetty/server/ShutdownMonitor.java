@@ -18,6 +18,9 @@
 
 package org.eclipse.jetty.server;
 
+import org.eclipse.jetty.util.StringUtil;
+import org.eclipse.jetty.util.thread.ShutdownThread;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
@@ -26,9 +29,6 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Properties;
-
-import org.eclipse.jetty.util.StringUtil;
-import org.eclipse.jetty.util.thread.ShutdownThread;
 
 /**
  * Shutdown/Stop Monitor thread.
@@ -43,6 +43,7 @@ import org.eclipse.jetty.util.thread.ShutdownThread;
 public class ShutdownMonitor 
 {
     // Implementation of safe lazy init, using Initialization on Demand Holder technique.
+    // 典型的单例模式
     static class Holder
     {
         static ShutdownMonitor instance = new ShutdownMonitor();

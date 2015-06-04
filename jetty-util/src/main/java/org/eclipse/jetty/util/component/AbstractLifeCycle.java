@@ -18,10 +18,10 @@
 
 package org.eclipse.jetty.util.component;
 
-import java.util.concurrent.CopyOnWriteArrayList;
-
 import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.Logger;
+
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Basic implementation of the life cycle interface for components.
@@ -60,7 +60,9 @@ public abstract class AbstractLifeCycle implements LifeCycle
             {
                 if (_state == __STARTED || _state == __STARTING)
                     return;
+                // 状态设为starting
                 setStarting();
+
                 doStart();
                 setStarted();
             }
