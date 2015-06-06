@@ -18,13 +18,6 @@
 
 package org.eclipse.jetty.server.nio;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SocketChannel;
-
 import org.eclipse.jetty.continuation.Continuation;
 import org.eclipse.jetty.io.AsyncEndPoint;
 import org.eclipse.jetty.io.ConnectedEndPoint;
@@ -37,6 +30,13 @@ import org.eclipse.jetty.io.nio.SelectorManager.SelectSet;
 import org.eclipse.jetty.server.AsyncHttpConnection;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.util.thread.ThreadPool;
+
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
 
 /* ------------------------------------------------------------------------------- */
 /**
@@ -294,6 +294,7 @@ public class SelectChannelConnector extends AbstractNIOConnector
         @Override
         public boolean dispatch(Runnable task)
         {
+            // 如果没有线程池就用server的线程池
             ThreadPool pool=getThreadPool();
             if (pool==null)
                 pool=getServer().getThreadPool();

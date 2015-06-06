@@ -18,6 +18,19 @@
 
 package org.eclipse.jetty.io.nio;
 
+import org.eclipse.jetty.io.AsyncEndPoint;
+import org.eclipse.jetty.io.ConnectedEndPoint;
+import org.eclipse.jetty.io.Connection;
+import org.eclipse.jetty.io.EndPoint;
+import org.eclipse.jetty.util.TypeUtil;
+import org.eclipse.jetty.util.component.AbstractLifeCycle;
+import org.eclipse.jetty.util.component.AggregateLifeCycle;
+import org.eclipse.jetty.util.component.Dumpable;
+import org.eclipse.jetty.util.log.Log;
+import org.eclipse.jetty.util.log.Logger;
+import org.eclipse.jetty.util.thread.Timeout;
+import org.eclipse.jetty.util.thread.Timeout.Task;
+
 import java.io.IOException;
 import java.nio.channels.CancelledKeyException;
 import java.nio.channels.Channel;
@@ -35,19 +48,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-
-import org.eclipse.jetty.io.AsyncEndPoint;
-import org.eclipse.jetty.io.ConnectedEndPoint;
-import org.eclipse.jetty.io.Connection;
-import org.eclipse.jetty.io.EndPoint;
-import org.eclipse.jetty.util.TypeUtil;
-import org.eclipse.jetty.util.component.AbstractLifeCycle;
-import org.eclipse.jetty.util.component.AggregateLifeCycle;
-import org.eclipse.jetty.util.component.Dumpable;
-import org.eclipse.jetty.util.log.Log;
-import org.eclipse.jetty.util.log.Logger;
-import org.eclipse.jetty.util.thread.Timeout;
-import org.eclipse.jetty.util.thread.Timeout.Task;
 
 
 /* ------------------------------------------------------------ */
@@ -453,6 +453,7 @@ public abstract class SelectorManager extends AbstractLifeCycle implements Dumpa
                 // Make any key changes required
                 Object change;
                 int changes=_changes.size();
+                // 从队列头取出一个change
                 while (changes-->0 && (change=_changes.poll())!=null)
                 {
                     Channel ch=null;

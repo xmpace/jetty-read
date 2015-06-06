@@ -18,6 +18,9 @@
 
 package org.eclipse.jetty.util.component;
 
+import org.eclipse.jetty.util.log.Log;
+import org.eclipse.jetty.util.log.Logger;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,9 +28,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import org.eclipse.jetty.util.log.Log;
-import org.eclipse.jetty.util.log.Logger;
 
 /**
  * An AggregateLifeCycle is an {@link LifeCycle} implementation for a collection of contained beans.
@@ -178,6 +178,7 @@ public class AggregateLifeCycle extends AbstractLifeCycle implements Destroyable
      * @param o The lifecycle to add
      * @param managed True if the LifeCycle is to be joined, otherwise it will be disjoint.
      * @return true if bean was added, false if already present.
+     * 添加bean，如果managed为true，那么启动这个bean的lifecycle（前提这个bean必须是个lifecycle）
      */
     public boolean addBean(Object o, boolean managed)
     {

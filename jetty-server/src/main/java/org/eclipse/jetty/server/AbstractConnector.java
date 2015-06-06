@@ -18,14 +18,6 @@
 
 package org.eclipse.jetty.server;
 
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.concurrent.atomic.AtomicLong;
-
-import javax.servlet.ServletRequest;
-
 import org.eclipse.jetty.http.HttpBuffers;
 import org.eclipse.jetty.http.HttpBuffersImpl;
 import org.eclipse.jetty.http.HttpFields;
@@ -43,6 +35,13 @@ import org.eclipse.jetty.util.log.Logger;
 import org.eclipse.jetty.util.statistic.CounterStatistic;
 import org.eclipse.jetty.util.statistic.SampleStatistic;
 import org.eclipse.jetty.util.thread.ThreadPool;
+
+import javax.servlet.ServletRequest;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Abstract Connector implementation. This abstract implementation of the Connector interface provides:
@@ -326,6 +325,7 @@ public abstract class AbstractConnector extends AggregateLifeCycle implements Ht
         // Start selector thread
         synchronized (this)
         {
+            // 启动acceptor线程
             _acceptorThreads = new Thread[getAcceptors()];
 
             for (int i = 0; i < _acceptorThreads.length; i++)

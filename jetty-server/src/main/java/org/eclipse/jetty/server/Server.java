@@ -275,6 +275,7 @@ public class Server extends HandlerWrapper implements Attributes
         
         MultiException mex=new MultiException();
 
+        // 在jetty.xml里new了一个threadPool，所以不为null
         if (_threadPool==null)
             setThreadPool(new QueuedThreadPool());
 
@@ -289,6 +290,7 @@ public class Server extends HandlerWrapper implements Attributes
 
         if (_connectors!=null && mex.size()==0)
         {
+            // 把server的connector都启动，jetty.xml里面只配置了一个connector
             for (int i=0;i<_connectors.length;i++)
             {
                 try{_connectors[i].start();}
